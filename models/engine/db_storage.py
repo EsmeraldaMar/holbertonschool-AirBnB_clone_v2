@@ -91,9 +91,13 @@ class DBStorage:
         self.__session = Session()
 
     def close(self):
-        """
+        '''
         Because SQLAlchemy doesn't reload this `Session`
         when it's time to insert new data,
         so we force it to reload
-        """
+        '''
         self.__session.close()
+
+    # def close(self):
+    #     """Remove or close the current SQLAlchemy session."""
+    #     self.__session.remove()  # or Session.close()
