@@ -18,27 +18,50 @@ class BaseModel:
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
+    # def __init__(self, *args, **kwargs):
+    #     """Instantiates a new model"""
+    #     if not kwargs:
+    #         from models import storage
+    #         self.id = str(uuid.uuid4())
+    #         self.created_at = datetime.now()
+    #         self.updated_at = datetime.now()
+    #     else:
+    #         for key, value in kwargs.items():
+    #             if key != '__class__':
+    #                 setattr(self, key, value)
+    #         # convert string rep to objects
+    #         if 'created_at' in kwargs and kwargs['created_at'] is not None:
+    #             self.created_at = datetime.strptime(self.created_at,
+    #                                                 '%Y-%m-%dT%H:%M:%S.%f')
+    #         if 'updated_at' in kwargs and kwargs['updated_at'] is not None:
+    #             self.updated_at = datetime.strptime(self.updated_at,
+    #                                                 '%Y-%m-%dT%H:%M:%S.%f')
+    #         # if no id, generate new UUID
+    #         if not getattr(self, 'id', None):
+    #             self.id = str(uuid.uuid4())
+
     def __init__(self, *args, **kwargs):
-        """Instantiates a new model"""
-        if not kwargs:
-            from models import storage
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
-        else:
+        """Initialization of the base model"""
+        if kwargs:
             for key, value in kwargs.items():
-                if key != '__class__':
+                if key != "__class__":
                     setattr(self, key, value)
-            # convert string rep to objects
-            if 'created_at' in kwargs and kwargs['created_at'] is not None:
-                self.created_at = datetime.strptime(self.created_at,
-                                                    '%Y-%m-%dT%H:%M:%S.%f')
-            if 'updated_at' in kwargs and kwargs['updated_at'] is not None:
-                self.updated_at = datetime.strptime(self.updated_at,
-                                                    '%Y-%m-%dT%H:%M:%S.%f')
-        # if no id, generate new UUID
-        if not getattr(self, 'id', None):
+            if kwargs.get("created_at", None) and type(self.created_at) is str:
+                self.created_at = datetime.strptime(kwargs["created_at"], '%Y-%m-%dT%H:%M:%S.%f')
+            else:
+                self.created_at = datetime.utcnow()
+            
+            if kwargs.get("updated_at", None) and type(self.updated_at) is str:
+                self.updated_at = datetime.strptime(kwargs["updated_at"], '%Y-%m-%dT%H:%M:%S.%f')
+            else:
+                self.updated_at = datetime.utcnow()
+
+            if kwargs.get("id", None) is None:
+                self.id = str(uuid.uuid4())
+        else:
             self.id = str(uuid.uuid4())
+            self.created_at = datetime.utcnow()
+            self.updated_at = self.created_at
 
     def __str__(self):
         """Returns a string representation of the instance"""
