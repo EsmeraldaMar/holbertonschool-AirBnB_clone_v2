@@ -14,10 +14,14 @@ if os.getenv("HBNB_TYPE_STORAGE") == "db":
 
 class BaseModel:
     """Adding attributes in class"""
-    id = Column(String(60), primary_key=True, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-
+    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        id = Column(String(60), primary_key=True, nullable=False)
+        created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+        updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    else:
+        id = None
+        created_at = None
+        updated_at = None
     # def __init__(self, *args, **kwargs):
     #     """Instantiates a new model"""
     #     if not kwargs:
